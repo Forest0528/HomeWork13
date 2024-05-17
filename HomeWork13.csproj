@@ -7,4 +7,15 @@
     <StartupObject>HomeWork13.App</StartupObject>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="BankingLibrary\**" />
+    <EmbeddedResource Remove="BankingLibrary\**" />
+    <None Remove="BankingLibrary\**" />
+    <Page Remove="BankingLibrary\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="BankingLibrary\BankingLibrary.csproj" />
+  </ItemGroup>
+
 </Project>

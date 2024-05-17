@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -13,20 +11,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using BankingLibrary;
 
 namespace HomeWork13
 {
-    #region HW14
-
-    // Доработать приложение 13 модуля.
-    // Добавить механизмы оповещений, используя делегаты и события.
-    // Реализовать журнал действий, который будет хранить записи всех транзакций по счетам / вкладам / кредитам.
-
-    #endregion
-
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         private GridViewColumnHeader listViewSortCol = null;
@@ -60,11 +48,6 @@ namespace HomeWork13
             MessageBox.Show("SkillBank v.0.2", this.Title, MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        /// <summary>
-        /// Right button menu
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void ClientList_OnPreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
             var item = (sender as ListView).SelectedItem;
@@ -76,35 +59,20 @@ namespace HomeWork13
             }
         }
 
-        /// <summary>
-        /// Refresh client's data
-        /// </summary>
         void RefreshList()
         {
-            // refresh clients list
             var bankDep = bankList.SelectedItem as BankDep;
             clientList.ItemsSource = (bankDep.Clients).Where(x => x != null);
 
-            // refresh clients info list
             clientInfo.ItemsSource = clientList.SelectedItems;
             CollectionViewSource.GetDefaultView(clientList.SelectedItems).Refresh();
         }
 
-        /// <summary>
-        /// Simple deposit popup menu enable
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void MenuItemSimpleDeposit_OnClick(object sender, RoutedEventArgs e)
         {
             pSimpDep.IsOpen = true;
         }
 
-        /// <summary>
-        /// Make simple deposit
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void MenuItemSimpDep_OnClick(object sender, RoutedEventArgs e)
         {
             Client currentClient = clientList.SelectedItem as Client;
@@ -116,7 +84,6 @@ namespace HomeWork13
                 return;
             }
 
-            // check the client have enough money to make deposit
             bool checkFunds = core.CheckSuffAmount(currentClient, UInt32.Parse(amountSimpDepTextBox.Text));
             if (!checkFunds)
             {
@@ -124,7 +91,6 @@ namespace HomeWork13
                 return;
             }
 
-            // make simple deposit
             core.MakeSimpleDeposit(currentClient, amountSimpDeposit);
 
             pSimpDep.IsOpen = false;
@@ -134,21 +100,11 @@ namespace HomeWork13
             MessageBox.Show("Success", "Simple deposit", MessageBoxButton.OK, MessageBoxImage.Asterisk);
         }
 
-        /// <summary>
-        /// Capitalized deposit popup menu enable
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void MenuItemCapitalizedDeposit_OnClick(object sender, RoutedEventArgs e)
         {
             pCapDep.IsOpen = true;
         }
 
-        /// <summary>
-        /// Make capitalized deposit
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void MenuItemCapDep_OnClick(object sender, RoutedEventArgs e)
         {
             Client currentClient = clientList.SelectedItem as Client;
@@ -160,7 +116,6 @@ namespace HomeWork13
                 return;
             }
 
-            // check the client have enough money to make deposit
             bool checkFunds = core.CheckSuffAmount(currentClient, UInt32.Parse(amountCapDepTextBox.Text));
             if (!checkFunds)
             {
@@ -168,7 +123,6 @@ namespace HomeWork13
                 return;
             }
 
-            // make capitalized deposit
             core.MakeCapitalizedDeposit(currentClient, amountCapDeposit);
 
             pCapDep.IsOpen = false;
@@ -178,21 +132,11 @@ namespace HomeWork13
             MessageBox.Show("Success", "Capitalized deposit", MessageBoxButton.OK, MessageBoxImage.Asterisk);
         }
 
-        /// <summary>
-        /// Loan popup menu enable
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void MenuItemLoan_OnClick(object sender, RoutedEventArgs e)
         {
             pLoan.IsOpen = true;
         }
 
-        /// <summary>
-        /// Get a loan
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void MenuItemGetLoan_OnClick(object sender, RoutedEventArgs e)
         {
             bool result = UInt32.TryParse(amountLoanTextBox.Text, out uint amountLoan);
@@ -204,7 +148,6 @@ namespace HomeWork13
 
             Client currentClient = clientList.SelectedItem as Client;
 
-            // get loan
             core.GetLoan(currentClient, amountLoan);
 
             pLoan.IsOpen = false;
@@ -212,25 +155,14 @@ namespace HomeWork13
             RefreshList();
 
             MessageBox.Show("Success", "Get loan", MessageBoxButton.OK, MessageBoxImage.Asterisk);
-
         }
 
-        /// <summary>
-        /// Transfer popup menu enable
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void MenuItemTransfer_OnClick(object sender, RoutedEventArgs e)
         {
             pTransfer.IsOpen = true;
             transferTo.ItemsSource = clientList.ItemsSource;
         }
 
-        /// <summary>
-        /// Make a transfer
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void MenuItemMakeTransfer_OnClick(object sender, RoutedEventArgs e)
         {
             Client currentClient = clientList.SelectedItem as Client;
@@ -249,7 +181,6 @@ namespace HomeWork13
                 return;
             }
 
-            // check the sender have enough money to make transfer
             bool checkFunds = core.CheckSuffAmount(currentClient, UInt32.Parse(amountTransferTextBox.Text));
             if (!checkFunds)
             {
@@ -257,7 +188,6 @@ namespace HomeWork13
                 return;
             }
 
-            // transfer funds
             core.TransferFunds(currentClient, recipient, amountTransfer);
 
             pTransfer.IsOpen = false;
@@ -267,11 +197,6 @@ namespace HomeWork13
             MessageBox.Show("Transfer completed", "Funds transfer", MessageBoxButton.OK, MessageBoxImage.Asterisk);
         }
 
-        /// <summary>
-        /// Show deposit info popup menu
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void ButtonDepInfo_OnClick(object sender, RoutedEventArgs e)
         {
             Client currentClient = clientList.SelectedItem as Client;
@@ -306,11 +231,6 @@ namespace HomeWork13
             pDepInfo.IsOpen = false;
         }
 
-        /// <summary>
-        /// Show clients in current bank department
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void BankList_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (bankList.SelectedItems != null)
@@ -320,11 +240,6 @@ namespace HomeWork13
             }
         }
 
-        /// <summary>
-        /// Show current client info
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void ClientInfo_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (clientList.SelectedItems != null)
@@ -357,11 +272,8 @@ namespace HomeWork13
 
     public class SortAdorner : Adorner
     {
-        private static readonly Geometry ascGeometry =
-            Geometry.Parse("M 0 4 L 3.5 0 L 7 4 Z");
-
-        private static readonly Geometry descGeometry =
-            Geometry.Parse("M 0 0 L 3.5 4 L 7 0 Z");
+        private static readonly Geometry ascGeometry = Geometry.Parse("M 0 4 L 3.5 0 L 7 4 Z");
+        private static readonly Geometry descGeometry = Geometry.Parse("M 0 0 L 3.5 4 L 7 0 Z");
 
         public ListSortDirection Direction { get; private set; }
 
@@ -378,8 +290,7 @@ namespace HomeWork13
             if (AdornedElement.RenderSize.Width < 20)
                 return;
 
-            TranslateTransform transform = new TranslateTransform
-            (
+            TranslateTransform transform = new TranslateTransform(
                 AdornedElement.RenderSize.Width - 15,
                 (AdornedElement.RenderSize.Height - 5) / 2
             );
